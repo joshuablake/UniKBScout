@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <title>Add Scouts/Logi</title>
+<p>{{ message|safe }}</p>
 <p>Enter text into the box with each line being one of:
 <ul>
   <li>A pilot to add (full name)
@@ -8,6 +9,6 @@
 </ul>
 <form action="" method="POST">
   Password: <input type="password" name="password"><br>
-  Data:<br><textarea cols="100" rows="30" name="content"></textarea><br>
+  Data:<br><textarea cols="100" rows="30" name="content">{{ data }}</textarea><br>
   <input type="submit">
 </form>

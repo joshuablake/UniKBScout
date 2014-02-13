@@ -29,6 +29,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
 from bs4 import BeautifulSoup
+from datetime import datetime
 from flask import Flask, request, render_template
 from logging import getLogger
 from urllib import urlencode
@@ -36,6 +37,7 @@ from urllib2 import urlopen
 import re
 app = Flask(__name__)
 logger = getLogger(__name__)
+MAX_RUN_TIME = 50
 
 @app.route('/', methods=['GET', 'POST'])
 def main():
@@ -81,9 +83,14 @@ def main():
                             .format(error_msg, scout, kill_url))
         return errors
 
+    def construct_date(kills, pilots):
+        return '\n'.join(kills + pilots)
+
     if request.method == 'GET':
         return render_template('form.html')
     elif request.method == 'POST':
+        start_time = datetime.now()
+
         lines = request.form['content'].splitlines()
         kills = []
         pilots = []
@@ -103,9 +110,16 @@ def main():
                 pilots.append(line)
 
         errors = []
-        for kill in kills:
+        data = ''
+        for i in xrange(len(kills)):
+            if (datetime.now() - start_time).seconds > MAX_RUN_TIME:
+                data = construct_date(kills[i:], pilots)
+                break
+            kill = kills[i]
             errors.extend(add_scouts(kill, pilots, request.form['password']))
         if errors == []:
             errors = ['success']
-        return '<br>'.join(errors)
-
+        message = '<br>'.join(errors)
+        if data:
+            message += '<br>Ran out of time, please resubmit'
+        return render_template('form.html', data=data, message=message)
