@@ -4,9 +4,9 @@
 # for details.
 
 application: unikbscout
-version: 1
+version: 0-2-0
 runtime: python27
-api_version: 0-2-0
+api_version: 1
 threadsafe: yes
 
 # Handlers define how to route requests to your application.
