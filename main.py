@@ -41,26 +41,35 @@ MAX_RUN_TIME = 50
 
 @app.route('/', methods=['GET', 'POST'])
 def main():
-    def is_br(url):
-        return 'kill_related' in url
+    def parse_url(url):
+        def is_br(url):
+            return 'kill_related' in url
 
-    def parse_br(url):
-        result = []
-        br = BeautifulSoup(urlopen(url).read())
-        hostiles = br.find(id='pilots_and_ships').find_all(class_='kb-table')[-1]
-        for kill in hostiles.find_all('tr', class_='br-destroyed'):
-            href = kill\
-                    .find_all('td')[0]\
-                    .a\
-                    .get('href')
-            logger.info('BR contained KM %s', href)
-            result.append(href)
-        return result
+        def parse_br(url):
+            result = []
+            br = BeautifulSoup(urlopen(url).read())
+            hostiles = br.find(id='pilots_and_ships').find_all(class_='kb-table')[-1]
+            for kill in hostiles.find_all('tr', class_='br-destroyed'):
+                href = kill\
+                        .find_all('td')[0]\
+                        .a\
+                        .get('href')
+                logger.info('BR contained KM %s', href)
+                result.append(href)
+            return result
+
+        if is_br(url):
+            logger.info('found BR %s', url)
+            return parse_br(url)
+        else:
+            logger.info('found KM %s', url)
+            return [url]
 
     def add_scouts(kill_url, scouts, password):
         errors = []
         for scout in scouts:
             error_msg = ''
+
             try:
                 data = urlencode((
                     ('scoutname', scout),
@@ -86,6 +95,9 @@ def main():
     def construct_date(kills, pilots):
         return '\n'.join(kills + pilots)
 
+    def out_of_time(start_time):
+        return (datetime.now() - start_time).seconds > MAX_RUN_TIME
+
     if request.method == 'GET':
         return render_template('form.html')
     elif request.method == 'POST':
@@ -97,14 +109,10 @@ def main():
         for line in lines:
             logger.debug('parsing %s', line)
             line = line.strip()
+
             if line.startswith('http'):
                 logger.debug('line is url')
-                if is_br(line):
-                    logger.info('found BR %s', line)
-                    kills.extend(parse_br(line))
-                else:
-                    logger.info('found KM %s', line)
-                    kills.append(line)
+                kills.extend(parse_url(line))
             else:
                 logger.info('found pilot', line)
                 pilots.append(line)
@@ -112,12 +120,13 @@ def main():
         errors = []
         data = ''
         for i in xrange(len(kills)):
-            if (datetime.now() - start_time).seconds > MAX_RUN_TIME:
+            if out_of_time(start_time):
                 data = construct_date(kills[i:], pilots)
                 break
             kill = kills[i]
             errors.extend(add_scouts(kill, pilots, request.form['password']))
-        if errors == []:
+
+        if not errors:
             errors = ['success']
         message = '<br>'.join(errors)
         if data:
