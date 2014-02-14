@@ -111,6 +111,7 @@ def parse_url(url):
         logger.info('found KM %s', url)
         return [url]
 
+
 def add_scouts(kill_url, scouts, password):
     """Add scouts/logi to a kill
 
@@ -145,8 +146,9 @@ def add_scouts(kill_url, scouts, password):
                     error_msg = 'Error'
         if error_msg:
             errors.append('{} when adding {} to KM {}'
-                            .format(error_msg, scout, kill_url))
+                          .format(error_msg, scout, kill_url))
     return errors
+
 
 def construct_data(kills, pilots):
     """Construct textarea content for resubmission
@@ -156,6 +158,7 @@ def construct_data(kills, pilots):
 
     """
     return '\n'.join(kills + pilots)
+
 
 def out_of_time(start_time):
     """Check if out of time"""
