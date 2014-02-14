@@ -156,6 +156,8 @@ def add_scouts(kill_url, scouts, password):
     errors = []
     for scout in scouts:
         if scout in check_string:
+            errors.append('{} already present on {}'
+                          .format(scout, kill_url))
             continue
         error_msg = ''
 
