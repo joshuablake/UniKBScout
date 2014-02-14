@@ -161,13 +161,12 @@ def add_scouts(kill_url, scouts, password):
             continue
         error_msg = ''
 
+        data = urlencode((
+            ('scoutname', scout),
+            ('password', password),
+            ('scoutsubmit', 'add pilot'),
+        ))
         try:
-            data = urlencode((
-                ('scoutname', scout),
-                ('password', password),
-                ('scoutsubmit', 'add pilot'),
-            ))
-
             response = urlopen(kill_url, data=data).read()
         except BaseException as e:
             error_msg = 'Error: ' + str(e)
