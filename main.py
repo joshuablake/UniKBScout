@@ -31,6 +31,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 from bs4 import BeautifulSoup
 from datetime import datetime
 from flask import Flask, request, render_template
+from google.appengine.api import urlfetch
 from logging import getLogger
 from urllib import urlencode
 from urllib2 import urlopen
@@ -38,6 +39,7 @@ import re
 app = Flask(__name__)
 logger = getLogger(__name__)
 MAX_RUN_TIME = 50
+urlfetch.set_default_fetch_deadline(60)
 
 
 @app.route('/', methods=['GET', 'POST'])
