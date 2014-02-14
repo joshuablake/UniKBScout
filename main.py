@@ -42,6 +42,7 @@ MAX_RUN_TIME = 50
 
 @app.route('/', methods=['GET', 'POST'])
 def main():
+    """Only endpoint, always submission of form and parsing"""
     def parse_url(url):
         """Take a url from KB and returns links to all KMs
 
@@ -75,6 +76,16 @@ def main():
             return [url]
 
     def add_scouts(kill_url, scouts, password):
+        """Add scouts/logi to a kill
+
+        Params:
+            kill_url: url of the KM to be added to
+            scouts: list of scouts/logi to be added
+            password: password to enable adding of pilots
+        Returns:
+            A list of error messages
+
+        """
         errors = []
         for scout in scouts:
             error_msg = ''
