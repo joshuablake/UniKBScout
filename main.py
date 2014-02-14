@@ -42,95 +42,124 @@ MAX_RUN_TIME = 50
 
 @app.route('/', methods=['GET', 'POST'])
 def main():
-    def parse_url(url):
-        def is_br(url):
-            """Check if url is a BR"""
-            return 'kill_related' in url
-
-        def parse_br(url):
-            result = []
-            br = BeautifulSoup(urlopen(url).read())
-            hostiles = br.find(id='pilots_and_ships').find_all(class_='kb-table')[-1]
-            for kill in hostiles.find_all('tr', class_='br-destroyed'):
-                href = kill\
-                        .find_all('td')[0]\
-                        .a\
-                        .get('href')
-                logger.info('BR contained KM %s', href)
-                result.append(href)
-            return result
-
-        if is_br(url):
-            logger.info('found BR %s', url)
-            return parse_br(url)
-        else:
-            logger.info('found KM %s', url)
-            return [url]
-
-    def add_scouts(kill_url, scouts, password):
-        errors = []
-        for scout in scouts:
-            error_msg = ''
-
-            try:
-                data = urlencode((
-                    ('scoutname', scout),
-                    ('password', password),
-                    ('scoutsubmit', 'add pilot'),
-                ))
-
-                response = urlopen(kill_url, data=data).read()
-            except BaseException as e:
-                error_msg = 'Error: ' + str(e)
-            else:
-                if not scout in response:
-                    error = re.search('<b>(Error: .+)</b>', response)
-                    if error:
-                        error_msg = error.groups(1)[0]
-                    else:
-                        error_msg = 'Error'
-            if error_msg:
-                errors.append('{} when adding {} to KM {}'
-                              .format(error_msg, scout, kill_url))
-        return errors
-
-    def construct_date(kills, pilots):
-        return '\n'.join(kills + pilots)
-
-    def out_of_time(start_time):
-        return (datetime.now() - start_time).seconds > MAX_RUN_TIME
-
+    """Only endpoint, always submission of form and parsing"""
     if request.method == 'GET':
         return render_template('form.html')
-    elif request.method == 'POST':
-        start_time = datetime.now()
 
-        lines = request.form['content'].splitlines()
-        kills = []
-        pilots = []
-        for line in lines:
-            logger.debug('parsing %s', line)
-            line = line.strip()
+    start_time = datetime.now()
+    lines = request.form['content'].splitlines()
 
-            if line.startswith('http'):
-                logger.debug('line is url')
-                kills.extend(parse_url(line))
-            else:
-                logger.info('found pilot', line)
-                pilots.append(line)
+    kills = []
+    pilots = []
+    for line in lines:
+        logger.debug('parsing %s', line)
+        line = line.strip()
 
-        errors = []
-        data = ''
-        for i in xrange(len(kills)):
-            if out_of_time(start_time):
-                data = construct_date(kills[i:], pilots)
-                break
-            kill = kills[i]
-            errors.extend(add_scouts(kill, pilots, request.form['password']))
+        if line.startswith('http'):
+            logger.debug('line is url')
+            kills.extend(parse_url(line))
+        else:
+            logger.info('found pilot', line)
+            pilots.append(line)
 
-        if not errors:
-            errors = ['success']
-        message = '<br>'.join(errors)
-        if data:
-            message += '<br>Ran out of time, please resubmit'
-        return render_template('form.html', data=data, message=message)
+    errors = []
+    data = ''
+    for i in xrange(len(kills)):
+        if out_of_time(start_time):
+            data = construct_data(kills[i:], pilots)
+            break
+        kill = kills[i]
+        errors.extend(add_scouts(kill, pilots, request.form['password']))
+
+    if not errors:
+        errors = ['success']
+    message = '<br>'.join(errors)
+    if data:
+        message += '<br>Ran out of time, please resubmit'
+    return render_template('form.html', data=data, message=message)
+
+
+def parse_url(url):
+    """Take a url from KB and returns links to all KMs
+
+    If the url refers to a KM then the url is returned. If it refers to a
+    BR then the BR is parsed for all hostile losses which are then
+    returned
+
+    """
+    def is_br(url):
+        """Check if url is a BR"""
+        return 'kill_related' in url
+
+    def parse_br(url):
+        result = []
+        br = BeautifulSoup(urlopen(url).read())
+        hostiles = br.find(id='pilots_and_ships').find_all(class_='kb-table')[-1]
+        for kill in hostiles.find_all('tr', class_='br-destroyed'):
+            href = kill\
+                    .find_all('td')[0]\
+                    .a\
+                    .get('href')
+            logger.info('BR contained KM %s', href)
+            result.append(href)
+        return result
+
+    if is_br(url):
+        logger.info('found BR %s', url)
+        return parse_br(url)
+    else:
+        logger.info('found KM %s', url)
+        return [url]
+
+
+def add_scouts(kill_url, scouts, password):
+    """Add scouts/logi to a kill
+
+    Params:
+        kill_url: url of the KM to be added to
+        scouts: list of scouts/logi to be added
+        password: password to enable adding of pilots
+    Returns:
+        A list of error messages
+
+    """
+    errors = []
+    for scout in scouts:
+        error_msg = ''
+
+        try:
+            data = urlencode((
+                ('scoutname', scout),
+                ('password', password),
+                ('scoutsubmit', 'add pilot'),
+            ))
+
+            response = urlopen(kill_url, data=data).read()
+        except BaseException as e:
+            error_msg = 'Error: ' + str(e)
+        else:
+            if not scout in response:
+                error = re.search('<b>(Error: .+)</b>', response)
+                if error:
+                    error_msg = error.groups(1)[0]
+                else:
+                    error_msg = 'Error'
+        if error_msg:
+            errors.append('{} when adding {} to KM {}'
+                          .format(error_msg, scout, kill_url))
+    return errors
+
+
+def construct_data(kills, pilots):
+    """Construct textarea content for resubmission
+
+    Given a list of kills and a list of pilots, put them together in a
+    form that enables them to be fed back into this view
+
+    """
+    return '\n'.join(kills + pilots)
+
+
+def out_of_time(start_time):
+    """Check if out of time"""
+    return (datetime.now() - start_time).seconds > MAX_RUN_TIME
