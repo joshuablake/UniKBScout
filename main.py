@@ -47,8 +47,8 @@ def main():
         return render_template('form.html')
 
     start_time = datetime.now()
-
     lines = request.form['content'].splitlines()
+
     kills = []
     pilots = []
     for line in lines:
