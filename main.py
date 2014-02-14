@@ -80,28 +80,44 @@ def main():
 
 
 def parse_url(url):
-    """Take a url from KB and returns links to all KMs
-
-    If the url refers to a KM then the url is returned. If it refers to a
-    BR then the BR is parsed for all hostile losses which are then
-    returned
-
-    """
     def is_br(url):
-        """Check if url is a BR"""
         return 'kill_related' in url
 
     def parse_br(url):
+        def get_hostile_losses(soup):
+            """Take BR BeautifulSoup, return rows with hostile losses"""
+            main_area = soup.find(id='pilots_and_ships')
+            hostile_table = main_area.find_all(class_='kb-table')[-1]
+            return hostile_table.find_all('tr', class_='br-destroyed')
+
+        def get_urls(kill, checking_pods):
+            """Return url(s) for a given kill on a BR.
+
+            Params:
+                kill: a row where a loss occured
+                checking_pods: whether to also return pod loss (if occured)
+
+            """
+
+            kill_cells = kill.find_all('td')
+            ship_kill_url = kill_cells[0].a.get('href')
+            if checking_pods:
+                pod_cell = kill_cells[1]
+                try:
+                    pod_kill_url = pod_cell.find_all('a')[1].get('href')
+                except Exception:
+                    pass
+                else:
+                    return (ship_kill_url, pod_kill_url)
+            return (ship_kill_url,)
+
+        check_pods = request.form.get('pods', 0) == '1'
         result = []
         br = BeautifulSoup(urlopen(url).read())
-        hostiles = br.find(id='pilots_and_ships').find_all(class_='kb-table')[-1]
-        for kill in hostiles.find_all('tr', class_='br-destroyed'):
-            href = kill\
-                    .find_all('td')[0]\
-                    .a\
-                    .get('href')
-            logger.info('BR contained KM %s', href)
-            result.append(href)
+        for kill in get_hostile_losses(br):
+            urls = get_urls(kill, check_pods)
+            result.extend(urls)
+            logger.info('BR contained KM %s', ' and '.join(urls))
         return result
 
     if is_br(url):
