@@ -39,6 +39,7 @@ app = Flask(__name__)
 logger = getLogger(__name__)
 MAX_RUN_TIME = 50
 
+
 @app.route('/', methods=['GET', 'POST'])
 def main():
     def parse_url(url):
