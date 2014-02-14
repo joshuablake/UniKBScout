@@ -90,7 +90,7 @@ def main():
                     else:
                         error_msg = 'Error'
             if error_msg:
-                errors.append('{} when adding {} to KM {}'\
+                errors.append('{} when adding {} to KM {}'
                             .format(error_msg, scout, kill_url))
         return errors
 
