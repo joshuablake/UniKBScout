@@ -112,7 +112,7 @@ def main():
                               .format(error_msg, scout, kill_url))
         return errors
 
-    def construct_date(kills, pilots):
+    def construct_data(kills, pilots):
         return '\n'.join(kills + pilots)
 
     def out_of_time(start_time):
@@ -141,7 +141,7 @@ def main():
         data = ''
         for i in xrange(len(kills)):
             if out_of_time(start_time):
-                data = construct_date(kills[i:], pilots)
+                data = construct_data(kills[i:], pilots)
                 break
             kill = kills[i]
             errors.extend(add_scouts(kill, pilots, request.form['password']))
