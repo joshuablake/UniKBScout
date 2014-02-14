@@ -45,37 +45,38 @@ def main():
     """Only endpoint, always submission of form and parsing"""
     if request.method == 'GET':
         return render_template('form.html')
-    elif request.method == 'POST':
-        start_time = datetime.now()
 
-        lines = request.form['content'].splitlines()
-        kills = []
-        pilots = []
-        for line in lines:
-            logger.debug('parsing %s', line)
-            line = line.strip()
+    start_time = datetime.now()
 
-            if line.startswith('http'):
-                logger.debug('line is url')
-                kills.extend(parse_url(line))
-            else:
-                logger.info('found pilot', line)
-                pilots.append(line)
+    lines = request.form['content'].splitlines()
+    kills = []
+    pilots = []
+    for line in lines:
+        logger.debug('parsing %s', line)
+        line = line.strip()
 
-        errors = []
-        data = ''
-        for i in xrange(len(kills)):
-            if out_of_time(start_time):
-                data = construct_data(kills[i:], pilots)
-                break
-            kill = kills[i]
-            errors.extend(add_scouts(kill, pilots, request.form['password']))
+        if line.startswith('http'):
+            logger.debug('line is url')
+            kills.extend(parse_url(line))
+        else:
+            logger.info('found pilot', line)
+            pilots.append(line)
 
-        if not errors:
-            errors = ['success']
-        message = '<br>'.join(errors)
-        if data:
-            message += '<br>Ran out of time, please resubmit'
+    errors = []
+    data = ''
+    for i in xrange(len(kills)):
+        if out_of_time(start_time):
+            data = construct_data(kills[i:], pilots)
+            break
+        kill = kills[i]
+        errors.extend(add_scouts(kill, pilots, request.form['password']))
+
+    if not errors:
+        errors = ['success']
+    message = '<br>'.join(errors)
+    if data:
+        message += '<br>Ran out of time, please resubmit'
+    return render_template('form.html', data=data, message=message)
 
 def parse_url(url):
     """Take a url from KB and returns links to all KMs
@@ -158,4 +159,3 @@ def construct_data(kills, pilots):
 def out_of_time(start_time):
     """Check if out of time"""
     return (datetime.now() - start_time).seconds > MAX_RUN_TIME
-    return render_template('form.html', data=data, message=message)
