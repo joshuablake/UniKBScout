@@ -3,8 +3,8 @@
 Copyright (c) 2014, Joshua Blake
 All rights reserved.
 
-Redistribution and use in source and binary forms, with or without modification,
-are permitted provided that the following conditions are met:
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
 1. Redistributions of source code must retain the above copyright notice, this
 list of conditions and the following disclaimer.
 
@@ -39,10 +39,12 @@ app = Flask(__name__)
 logger = getLogger(__name__)
 MAX_RUN_TIME = 50
 
+
 @app.route('/', methods=['GET', 'POST'])
 def main():
     def parse_url(url):
         def is_br(url):
+            """Check if url is a BR"""
             return 'kill_related' in url
 
         def parse_br(url):
@@ -88,8 +90,8 @@ def main():
                     else:
                         error_msg = 'Error'
             if error_msg:
-                errors.append('{} when adding {} to KM {}'\
-                            .format(error_msg, scout, kill_url))
+                errors.append('{} when adding {} to KM {}'
+                              .format(error_msg, scout, kill_url))
         return errors
 
     def construct_date(kills, pilots):
