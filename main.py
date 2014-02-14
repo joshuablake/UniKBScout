@@ -91,7 +91,7 @@ def main():
                         error_msg = 'Error'
             if error_msg:
                 errors.append('{} when adding {} to KM {}'
-                            .format(error_msg, scout, kill_url))
+                              .format(error_msg, scout, kill_url))
         return errors
 
     def construct_date(kills, pilots):
