@@ -113,9 +113,16 @@ def main():
         return errors
 
     def construct_data(kills, pilots):
+        """Construct textarea content for resubmission
+
+        Given a list of kills and a list of pilots, put them together in a
+        form that enables them to be fed back into this view
+
+        """
         return '\n'.join(kills + pilots)
 
     def out_of_time(start_time):
+        """Check if out of time"""
         return (datetime.now() - start_time).seconds > MAX_RUN_TIME
 
     if request.method == 'GET':
