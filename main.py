@@ -78,6 +78,7 @@ def main():
         message += '<br>Ran out of time, please resubmit'
     return render_template('form.html', data=data, message=message)
 
+
 def parse_url(url):
     """Take a url from KB and returns links to all KMs
 
