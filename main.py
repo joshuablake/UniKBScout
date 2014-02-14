@@ -43,6 +43,13 @@ MAX_RUN_TIME = 50
 @app.route('/', methods=['GET', 'POST'])
 def main():
     def parse_url(url):
+        """Take a url from KB and returns links to all KMs
+
+        If the url refers to a KM then the url is returned. If it refers to a
+        BR then the BR is parsed for all hostile losses which are then
+        returned
+
+        """
         def is_br(url):
             """Check if url is a BR"""
             return 'kill_related' in url
