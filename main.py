@@ -83,6 +83,7 @@ def main():
 
 def parse_url(url):
     def is_br(url):
+        """Check if the url is a BR"""
         return 'kill_related' in url
 
     def parse_br(url):
