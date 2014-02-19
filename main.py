@@ -90,10 +90,14 @@ def parse_url(url):
 
     if is_br(url):
         logger.info('found BR %s', url)
-        return parse_br(url)
+        urls = parse_br(url)
     else:
         logger.info('found KM %s', url)
-        return [url]
+        urls = [url]
+    for i, km in enumerate(urls):
+        if not 'nolimit' in km:
+            urls[i] = km + '&nolimit'
+    return urls
 
     def parse_br(url):
         """Get all KMs on a BR
