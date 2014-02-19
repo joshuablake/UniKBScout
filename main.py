@@ -161,13 +161,13 @@ def add_scouts(kill_url, scouts, password):
         """Check if we should check a KM for a pilot before adding"""
         return request.form.get('check', 0) == '1'
 
-    def get_ivolved_parties(soup):
+    def get_involved_parties(soup):
         """Get involved parties section from a KM"""
         return unicode(soup.find(id='kl-detail-left').table)
 
     if checking_present_on_KM():
         start_KM = BeautifulSoup(urlopen(kill_url).read())
-        check_string = get_ivolved_parties(start_KM)
+        check_string = get_involved_parties(start_KM)
     else:
         check_string = ''
 
