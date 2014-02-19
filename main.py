@@ -169,7 +169,7 @@ def add_scouts(kill_url, scouts, password):
         start_KM = BeautifulSoup(urlopen(kill_url).read())
         check_string = get_ivolved_parties(start_KM)
     else:
-        check_string= ''
+        check_string = ''
 
     errors = []
     for scout in scouts:
