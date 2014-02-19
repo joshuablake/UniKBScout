@@ -80,6 +80,13 @@ def parse_url(url):
     def is_br(url):
         """Check if the url is a BR"""
         return 'kill_related' in url
+    
+    if is_br(url):
+        logger.info('found BR %s', url)
+        return parse_br(url)
+    else:
+        logger.info('found KM %s', url)
+        return [url]
 
     def parse_br(url):
         """Get all KMs on a BR
@@ -132,13 +139,6 @@ def parse_url(url):
             killmail_urls.extend(get_urls(kill, check_pods))
             logger.info('BR contained KMs: %s', ' and '.join(urls))
         return killmail_urls
-
-    if is_br(url):
-        logger.info('found BR %s', url)
-        return parse_br(url)
-    else:
-        logger.info('found KM %s', url)
-        return [url]
 
 
 def add_scouts(kill_url, scouts, password):
