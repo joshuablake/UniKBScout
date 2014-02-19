@@ -72,13 +72,15 @@ def main():
 
     errors = []
     data = ''
+    timed_out = False
     for i, kill in enumerate(kills):
         if out_of_time(start_time):
             data = construct_data(kills[i:], pilots)
+            timed_out = True
             break
         errors.extend(add_scouts(kill, pilots, request.form['password']))
 
-    message = create_message(errors, data!='')
+    message = create_message(errors, timed_out)
     return render_template('form.html', data=data, message=message)
 
 
