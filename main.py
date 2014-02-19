@@ -36,7 +36,7 @@ from urllib2 import urlopen
 import re
 app = Flask(__name__)
 logger = app.logger
-MAX_RUN_TIME = 50 # time in secs to run before quiting for resubmission
+MAX_RUN_TIME = 50  # time in secs to run before quiting for resubmission
 
 #Google AppEnginge times out long requests unless specificallly told otherwise
 #KB can be slow so we manually raise this limit to the max possible
