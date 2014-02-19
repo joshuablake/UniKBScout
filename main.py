@@ -96,7 +96,13 @@ def parse_url(url):
 
         """
         def get_hostile_losses(soup):
-            """Take BR BeautifulSoup, return rows with hostile losses"""
+            """Get tr elements with hostile losses
+
+            Params:
+                soup: BeautifulSoup of a BR
+            Returns: list of BeautifulSoup(s) of tr elements which contain
+                     hostile losses
+            """
             main_area = soup.find(id='pilots_and_ships')
             hostile_table = main_area.find_all(class_='kb-table')[-1]
             return hostile_table.find_all('tr', class_='br-destroyed')
