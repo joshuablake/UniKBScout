@@ -198,7 +198,7 @@ def add_scouts(kill_url, scouts, password):
                         error_msg = 'Unknown error'
         if error_msg:
             error_msg = '{} when adding {} to KM {}'\
-                          .format(error_msg, scout, kill_url)
+                        .format(error_msg, scout, kill_url)
             logger.warning(error_msg)
             errors.append(error_msg)
     return errors
