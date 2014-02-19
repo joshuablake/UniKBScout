@@ -31,12 +31,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 from bs4 import BeautifulSoup
 from datetime import datetime
 from flask import Flask, request, render_template
-from logging import getLogger
 from urllib import urlencode
 from urllib2 import urlopen
 import re
 app = Flask(__name__)
-logger = getLogger(__name__)
+logger = app.logger
 MAX_RUN_TIME = 50 # time in secs to run before quiting for resubmission
 
 #Google AppEnginge times out long requests unless specificallly told otherwise
