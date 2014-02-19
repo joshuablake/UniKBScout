@@ -87,7 +87,7 @@ def parse_url(url):
     def is_br(url):
         """Check if the url is a BR"""
         return 'kill_related' in url
-    
+
     if is_br(url):
         logger.info('found BR %s', url)
         return parse_br(url)
