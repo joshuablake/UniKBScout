@@ -225,7 +225,7 @@ def create_message(errors, timeout):
         errors: list of errors found (empty if none)
         timeout: boolean of whether request timed out
     Returns: string containing output message
-    
+
     """
     if errors:
         logger.info('\n'.join(errors))
