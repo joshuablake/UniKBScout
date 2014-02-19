@@ -39,7 +39,13 @@ import re
 app = Flask(__name__)
 logger = getLogger(__name__)
 MAX_RUN_TIME = 50 # time in secs to run before quiting for resubmission
-urlfetch.set_default_fetch_deadline(60)
+
+try:
+    from google.appengine.api import urlfetch
+except ImportError:
+    pass
+else:
+    urlfetch.set_default_fetch_deadline(60)
 
 
 @app.route('/', methods=['GET', 'POST'])
