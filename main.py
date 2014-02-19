@@ -226,7 +226,6 @@ def create_message(errors, timeout):
     Returns: string containing output message
     
     """
-    logger.debug('Error list %s', errors)
     if errors:
         logger.info('\n'.join(errors))
         message = '<br>'.join(errors)
