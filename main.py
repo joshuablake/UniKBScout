@@ -60,13 +60,12 @@ def main():
     kills = []
     pilots = []
     for line in submission:
-        logger.debug('parsing %s', line)
         line = line.strip()
         if line.startswith('http'):
             logger.debug('line is url')
             kills.extend(parse_url(line))
         else:
-            logger.info(' %s', line)
+            logger.info('line is pilot %s', line)
             pilots.append(line)
 
     errors = []
