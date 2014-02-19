@@ -223,12 +223,17 @@ def create_message(errors, timeout):
         errors: list of errors found (empty if none)
         timeout: boolean of whether request timed out
     Returns: string containing output message
+    
     """
+    logger.debug('Error list %s', errors)
     if errors:
+        logger.info('\n'.join(errors))
         message = '<br>'.join(errors)
     else:
+        logger.info('Successful run')
         message = 'Success!'
     if timeout:
+        logger.info('Timed out')
         message += '<br>Ran out of time, please resubmit'
     return message
 
