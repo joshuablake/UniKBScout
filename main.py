@@ -71,11 +71,7 @@ def main():
             break
         errors.extend(add_scouts(kill, pilots, request.form['password']))
 
-    if not errors:
-        errors = ['success']
-    message = '<br>'.join(errors)
-    if data:
-        message += '<br>Ran out of time, please resubmit'
+    message = create_message(errors, data!='')
     return render_template('form.html', data=data, message=message)
 
 
@@ -213,3 +209,19 @@ def construct_data(kills, pilots):
 def out_of_time(start_time):
     """Check if out of time"""
     return (datetime.now() - start_time).seconds > MAX_RUN_TIME
+
+def create_message(errors, timeout):
+    """Create output message
+    Params:
+        errors: list of errors found (empty if none)
+        timeout: boolean of whether request timed out
+    Returns: string containing output message
+    """
+    if errors:
+        message = '<br>'.join(errors)
+    else:
+        message = 'Success!'
+    if timeout:
+        message += '<br>Ran out of time, please resubmit'
+    return message
+    
