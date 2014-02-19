@@ -173,33 +173,34 @@ def add_scouts(kill_url, scouts, password):
     else:
         check_string = ''
 
+    logger.debug('Adding %s to %s', scouts, kill_url)
     errors = []
     for scout in scouts:
-        if scout in check_string:
-            errors.append('{} already present on {}'
-                          .format(scout, kill_url))
-            continue
         error_msg = ''
-
-        data = urlencode((
-            ('scoutname', scout),
-            ('password', password),
-            ('scoutsubmit', 'add pilot'),
-        ))
-        try:
-            response = urlopen(kill_url, data=data).read()
-        except BaseException as e:
-            error_msg = 'Error: ' + str(e)
+        if scout in check_string:
+            error_msg = 'Already present'
         else:
-            if not scout in response:
-                error = re.search('<b>(Error: .+)</b>', response)
-                if error:
-                    error_msg = error.groups(1)[0]
-                else:
-                    error_msg = 'Error'
+            data = urlencode((
+                ('scoutname', scout),
+                ('password', password),
+                ('scoutsubmit', 'add pilot'),
+            ))
+            try:
+                response = urlopen(kill_url, data=data).read()
+            except BaseException as e:
+                error_msg = 'Error: ' + str(e)
+            else:
+                if not scout in response:
+                    error = re.search('<b>(Error: .+)</b>', response)
+                    if error:
+                        error_msg = error.groups(1)[0]
+                    else:
+                        error_msg = 'Unknown error'
         if error_msg:
-            errors.append('{} when adding {} to KM {}'
-                          .format(error_msg, scout, kill_url))
+            error_msg = '{} when adding {} to KM {}'\
+                          .format(error_msg, scout, kill_url)
+            logger.warning(error_msg)
+            errors.append(error_msg)
     return errors
 
 
