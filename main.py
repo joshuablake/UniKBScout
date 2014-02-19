@@ -61,7 +61,7 @@ def main():
             logger.debug('line is url')
             kills.extend(parse_url(line))
         else:
-            logger.info('found pilot', line)
+            logger.info('found pilot %s', line)
             pilots.append(line)
 
     errors = []
