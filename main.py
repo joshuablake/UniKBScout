@@ -44,7 +44,7 @@ urlfetch.set_default_fetch_deadline(60)
 
 @app.route('/', methods=['GET', 'POST'])
 def main():
-    """Only endpoint, always submission of form and parsing"""
+    """Only external endpoint"""
     if request.method == 'GET':
         return render_template('form.html')
 
