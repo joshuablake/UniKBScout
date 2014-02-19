@@ -218,6 +218,7 @@ def out_of_time(start_time):
     """Check if out of time"""
     return (datetime.now() - start_time).seconds > MAX_RUN_TIME
 
+
 def create_message(errors, timeout):
     """Create output message
     Params:
