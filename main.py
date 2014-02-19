@@ -231,4 +231,7 @@ def create_message(errors, timeout):
     if timeout:
         message += '<br>Ran out of time, please resubmit'
     return message
-    
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
