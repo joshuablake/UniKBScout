@@ -165,7 +165,9 @@ def add_scouts(kill_url, scouts, password):
 
     def get_involved_parties(soup):
         """Get involved parties section from a KM"""
-        return unicode(soup.find(id='kl-detail-left').table)
+        left_side = soup.find(id='kl-detail-left')
+        node = left_side.find_all('table', recursive=False)
+        return str(node).decode('utf-8')
 
     if checking_present_on_KM():
         start_KM = BeautifulSoup(urlopen(kill_url).read())
