@@ -88,6 +88,13 @@ def parse_url(url):
         return 'kill_related' in url
 
     def parse_br(url):
+        """Get all KMs on a BR
+
+        Params:
+            url: url of the BR
+        Returns: list of KM urls
+
+        """
         def get_hostile_losses(soup):
             """Take BR BeautifulSoup, return rows with hostile losses"""
             main_area = soup.find(id='pilots_and_ships')
@@ -119,10 +126,9 @@ def parse_url(url):
         result = []
         br = BeautifulSoup(urlopen(url).read())
         for kill in get_hostile_losses(br):
-            urls = get_urls(kill, check_pods)
-            result.extend(urls)
-            logger.info('BR contained KM %s', ' and '.join(urls))
-        return result
+            killmail_urls.extend(get_urls(kill, check_pods))
+            logger.info('BR contained KMs: %s', ' and '.join(urls))
+        return killmail_urls
 
     if is_br(url):
         logger.info('found BR %s', url)
