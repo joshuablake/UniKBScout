@@ -36,7 +36,7 @@ from urllib2 import urlopen
 import re
 app = Flask(__name__)
 logger = app.logger
-MAX_RUN_TIME = 50 # time in secs to run before quiting for resubmission
+MAX_RUN_TIME = 50  # time in secs to run before quiting for resubmission
 
 #Google AppEnginge times out long requests unless specificallly told otherwise
 #KB can be slow so we manually raise this limit to the max possible
@@ -87,7 +87,7 @@ def parse_url(url):
     def is_br(url):
         """Check if the url is a BR"""
         return 'kill_related' in url
-    
+
     if is_br(url):
         logger.info('found BR %s', url)
         return parse_br(url)
@@ -198,7 +198,7 @@ def add_scouts(kill_url, scouts, password):
                         error_msg = 'Unknown error'
         if error_msg:
             error_msg = '{} when adding {} to KM {}'\
-                          .format(error_msg, scout, kill_url)
+                        .format(error_msg, scout, kill_url)
             logger.warning(error_msg)
             errors.append(error_msg)
     return errors
@@ -218,13 +218,14 @@ def out_of_time(start_time):
     """Check if out of time"""
     return (datetime.now() - start_time).seconds > MAX_RUN_TIME
 
+
 def create_message(errors, timeout):
     """Create output message
     Params:
         errors: list of errors found (empty if none)
         timeout: boolean of whether request timed out
     Returns: string containing output message
-    
+
     """
     if errors:
         logger.info('\n'.join(errors))
