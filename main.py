@@ -56,7 +56,6 @@ def main():
     for line in lines:
         logger.debug('parsing %s', line)
         line = line.strip()
-
         if line.startswith('http'):
             logger.debug('line is url')
             kills.extend(parse_url(line))
@@ -116,7 +115,6 @@ def parse_url(url):
             Returns: tuple of url(s)
 
             """
-
             kill_cells = kill.find_all('td')
             ship_kill_url = kill_cells[0].a.get('href')
             if checking_pods:
