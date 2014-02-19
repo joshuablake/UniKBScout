@@ -65,11 +65,10 @@ def main():
 
     errors = []
     data = ''
-    for i in xrange(len(kills)):
+    for i, kill in enumerate(kills):
         if out_of_time(start_time):
             data = construct_data(kills[i:], pilots)
             break
-        kill = kills[i]
         errors.extend(add_scouts(kill, pilots, request.form['password']))
 
     if not errors:
