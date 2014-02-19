@@ -130,7 +130,7 @@ def parse_url(url):
 
         #see if the "Check pods?" checkbox has been ticked
         check_pods = request.form.get('pods', 0) == '1'
-        
+
         killmail_urls = []
         br = BeautifulSoup(urlopen(url).read())
         for kill in get_hostile_losses(br):
