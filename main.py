@@ -61,7 +61,7 @@ def main():
             logger.debug('line is url')
             kills.extend(parse_url(line))
         else:
-            logger.info('found pilot %s', line)
+            logger.info(' %s', line)
             pilots.append(line)
 
     errors = []
@@ -107,6 +107,7 @@ def parse_url(url):
             Params:
                 kill: a row (BeautifulSoup) where a loss occured
                 checking_pods: whether to also return pod loss (if occured)
+            Returns: tuple of url(s)
 
             """
 
@@ -117,13 +118,16 @@ def parse_url(url):
                 try:
                     pod_kill_url = pod_cell.find_all('a')[1].get('href')
                 except Exception:
+                    #pod probably wasn't lost
                     pass
                 else:
                     return (ship_kill_url, pod_kill_url)
             return (ship_kill_url,)
 
+        #see if the "Check pods?" checkbox has been ticked
         check_pods = request.form.get('pods', 0) == '1'
-        result = []
+        
+        killmail_urls = []
         br = BeautifulSoup(urlopen(url).read())
         for kill in get_hostile_losses(br):
             killmail_urls.extend(get_urls(kill, check_pods))
