@@ -82,6 +82,7 @@ def main():
 
 
 def parse_url(url):
+    """Parse a url and return a list of all KMs"""
     def is_br(url):
         """Check if the url is a BR"""
         return 'kill_related' in url
@@ -97,7 +98,7 @@ def parse_url(url):
             """Return url(s) for a given kill on a BR.
 
             Params:
-                kill: a row where a loss occured
+                kill: a row (BeautifulSoup) where a loss occured
                 checking_pods: whether to also return pod loss (if occured)
 
             """
