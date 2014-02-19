@@ -49,11 +49,11 @@ def main():
         return render_template('form.html')
 
     start_time = datetime.now()
-    lines = request.form['content'].splitlines()
+    submission = request.form['content'].splitlines()
 
     kills = []
     pilots = []
-    for line in lines:
+    for line in submission:
         logger.debug('parsing %s', line)
         line = line.strip()
         if line.startswith('http'):
